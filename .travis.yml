@@ -1,26 +1,26 @@
+
+sudo: required
 language: java
 
-sudo: false
-
 jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
+  - openjdk8
 
-env:
-  # - GWT_VERSION=2.8.0-beta1
-  - GWT_VERSION=2.7.0
-  - GWT_VERSION=2.5.1
-  
-script: mvn install -Dgwt.version=$GWT_VERSION
-matrix:
-  include:
-    - jdk: openjdk7
-      script: cd restygwt; mvn verify -Prun-its -Dmaven.test.skip -Dinvoker.test=restygwt-overlay-example
-    - jdk: oraclejdk7
-      script: cd restygwt; mvn verify -Prun-its -Dmaven.test.skip -Dinvoker.test=restygwt-rails-*
-    - jdk: oraclejdk8
-      script: cd restygwt; mvn verify -Prun-its -Dmaven.test.skip -Dinvoker.test=restygwt-example
-    - jdk: oraclejdk8
-      script: cd restygwt; mvn verify -Prun-its -Dmaven.test.skip -Dinvoker.test=restygwt-jersey-*,restygwt-cxf-jaxson-*
+script:
+  - mvn clean compile package assembly:single -DskipTests
 
+before_deploy:
+    - mkdir MiningBuild
+    - find . -name '*.jar' -exec cp {} ./MiningBuild \;
+    - cd /home/travis/build/semantic-conflicts/resty-gwt/MiningBuild
+    - tar -zcvf result.tar.gz *
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: result.tar.gz
+  name: fetchjar-867b917c43c32acbdcac55767e7f04334006c866
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    all_branches: true 
+            
