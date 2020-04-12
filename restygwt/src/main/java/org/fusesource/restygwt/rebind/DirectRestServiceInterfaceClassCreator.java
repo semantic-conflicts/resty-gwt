@@ -70,6 +70,4 @@ public class DirectRestServiceInterfaceClassCreator extends DirectRestBaseSource
     }
     return result;
   }
-  public DirectRestServiceInterfaceClassCreator(){
-  }
 }
